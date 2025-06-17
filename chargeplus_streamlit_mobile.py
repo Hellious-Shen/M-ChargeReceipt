@@ -11,15 +11,22 @@ from io import BytesIO
 # 🔐 Login using st.secrets
 def login():
     st.title("🔒 Charge+ Receipt App Login")
-    username = st.text_input("Username", placeholder="Enter username")
-    password = st.text_input("Password", type="password", placeholder="Enter password")
 
-    if st.button("Login", use_container_width=True):
+    if "login_attempted" not in st.session_state:
+        st.session_state["login_attempted"] = False
+
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+
+    if st.button("Login"):
         if username in st.secrets["users"] and st.secrets["users"][username] == password:
             st.session_state["authenticated"] = True
-            st.experimental_rerun()
         else:
-            st.error("❌ Invalid username or password")
+            st.session_state["login_attempted"] = True
+
+    if st.session_state["login_attempted"] and not st.session_state.get("authenticated", False):
+        st.error("❌ Invalid username or password")
+
 
 # 🚪 Session check
 if "authenticated" not in st.session_state:
@@ -28,6 +35,7 @@ if "authenticated" not in st.session_state:
 if not st.session_state["authenticated"]:
     login()
     st.stop()
+
 
 # -------------------------------
 # Mobile-Optimized App UI
