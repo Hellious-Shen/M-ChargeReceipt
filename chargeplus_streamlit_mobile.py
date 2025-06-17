@@ -113,9 +113,3 @@ if uploaded_files:
                        file_name="ChargePlus_Monthly_Summary.xlsx", use_container_width=True)
 """
 
-# Save to file
-mobile_friendly_app_path = "/mnt/data/chargeplus_streamlit_mobile.py"
-with open(mobile_friendly_app_path, "w") as f:
-    f.write(mobile_friendly_app)
-
-mobile_friendly_app_path
