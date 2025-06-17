@@ -15,17 +15,14 @@ def login():
     if st.button("Login", use_container_width=True):
         if username in st.secrets["users"] and st.secrets["users"][username] == password:
             st.session_state["authenticated"] = True
-            st.experimental_rerun()
         else:
             st.error("❌ Invalid username or password")
 
-# 🚪 Session check
-if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
 
+# 🚪 Session check
 if not st.session_state["authenticated"]:
-    login()
     st.stop()
+
 
 # -------------------------------
 # Mobile-Optimized App UI
