@@ -1,6 +1,6 @@
-# Recreate the mobile-friendly Streamlit app with safer login (no experimental_rerun)
+# Regenerate the mobile-friendly Streamlit app file after kernel reset
 
-secure_mobile_streamlit_app = """
+mobile_friendly_app = """
 import streamlit as st
 import fitz  # PyMuPDF
 import pandas as pd
@@ -8,7 +8,7 @@ import re
 from datetime import datetime
 from io import BytesIO
 
-# 🔐 Login using st.secrets (no experimental_rerun)
+# 🔐 Login using st.secrets
 def login():
     st.title("🔒 Charge+ Receipt App Login")
     username = st.text_input("Username", placeholder="Enter username")
@@ -17,6 +17,7 @@ def login():
     if st.button("Login", use_container_width=True):
         if username in st.secrets["users"] and st.secrets["users"][username] == password:
             st.session_state["authenticated"] = True
+            st.experimental_rerun()
         else:
             st.error("❌ Invalid username or password")
 
@@ -35,7 +36,8 @@ if not st.session_state["authenticated"]:
 st.title("📱 Charge+ Receipt Extractor")
 st.markdown("Upload your Charge+ PDF receipts below. The app works great on both desktop and mobile.")
 
-uploaded_files = st.file_uploader("📤 Upload Charge+ PDF receipts", type=["pdf"], accept_multiple_files=True)
+with st.container():
+    uploaded_files = st.file_uploader("📤 Upload Charge+ PDF receipts", type=["pdf"], accept_multiple_files=True)
 
 if uploaded_files:
     records = []
@@ -104,8 +106,8 @@ if uploaded_files:
 """
 
 # Save to file
-secure_mobile_app_path = "/mnt/data/chargeplus_streamlit_mobile_safe.py"
-with open(secure_mobile_app_path, "w") as f:
-    f.write(secure_mobile_streamlit_app)
+mobile_friendly_app_path = "/mnt/data/chargeplus_streamlit_mobile.py"
+with open(mobile_friendly_app_path, "w") as f:
+    f.write(mobile_friendly_app)
 
-secure_mobile_app_path
+mobile_friendly_app_path
