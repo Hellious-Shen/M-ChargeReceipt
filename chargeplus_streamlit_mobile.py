@@ -1,4 +1,6 @@
+# Recreate the mobile-friendly Streamlit app with safer login (no experimental_rerun)
 
+secure_mobile_streamlit_app = """
 import streamlit as st
 import fitz  # PyMuPDF
 import pandas as pd
@@ -6,7 +8,7 @@ import re
 from datetime import datetime
 from io import BytesIO
 
-# 🔐 Login using st.secrets
+# 🔐 Login using st.secrets (no experimental_rerun)
 def login():
     st.title("🔒 Charge+ Receipt App Login")
     username = st.text_input("Username", placeholder="Enter username")
@@ -18,11 +20,13 @@ def login():
         else:
             st.error("❌ Invalid username or password")
 
-
 # 🚪 Session check
-if not st.session_state["authenticated"]:
-    st.stop()
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
 
+if not st.session_state["authenticated"]:
+    login()
+    st.stop()
 
 # -------------------------------
 # Mobile-Optimized App UI
@@ -31,8 +35,7 @@ if not st.session_state["authenticated"]:
 st.title("📱 Charge+ Receipt Extractor")
 st.markdown("Upload your Charge+ PDF receipts below. The app works great on both desktop and mobile.")
 
-with st.container():
-    uploaded_files = st.file_uploader("📤 Upload Charge+ PDF receipts", type=["pdf"], accept_multiple_files=True)
+uploaded_files = st.file_uploader("📤 Upload Charge+ PDF receipts", type=["pdf"], accept_multiple_files=True)
 
 if uploaded_files:
     records = []
@@ -44,7 +47,7 @@ if uploaded_files:
 
             data = {}
             try:
-                date_match = re.search(r"Date:\s*(\d{1,2} \w+ \d{4})", text)
+                date_match = re.search(r"Date:\\s*(\\d{1,2} \\w+ \\d{4})", text)
                 data['Date'] = date_match.group(1)
                 data['Parsed Date'] = datetime.strptime(data['Date'], "%d %b %Y")
             except:
@@ -52,19 +55,19 @@ if uploaded_files:
                 data['Parsed Date'] = None
 
             try:
-                location_match = re.search(r"Charging Station\s*(.+)", text)
+                location_match = re.search(r"Charging Station\\s*(.+)", text)
                 data['Location'] = location_match.group(1).strip()
             except:
                 data['Location'] = "N/A"
 
             try:
-                kwh_match = re.search(r"Energy Consumption\s*([\d.]+)\s*kWh", text)
+                kwh_match = re.search(r"Energy Consumption\\s*([\\d.]+)\\s*kWh", text)
                 data['Energy (kWh)'] = float(kwh_match.group(1))
             except:
                 data['Energy (kWh)'] = None
 
             try:
-                cost_match = re.search(r"Charge\+ Credit used.*?S\$ ([\d.]+)", text, re.DOTALL)
+                cost_match = re.search(r"Charge\\+ Credit used.*?S\\$ ([\\d.]+)", text, re.DOTALL)
                 data['Cost (SGD)'] = float(cost_match.group(1))
             except:
                 data['Cost (SGD)'] = None
@@ -98,3 +101,11 @@ if uploaded_files:
 
     st.download_button("⬇️ Download Monthly Summary (Excel)", data=to_excel_bytes(summary),
                        file_name="ChargePlus_Monthly_Summary.xlsx", use_container_width=True)
+"""
+
+# Save to file
+secure_mobile_app_path = "/mnt/data/chargeplus_streamlit_mobile_safe.py"
+with open(secure_mobile_app_path, "w") as f:
+    f.write(secure_mobile_streamlit_app)
+
+secure_mobile_app_path
